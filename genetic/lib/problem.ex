@@ -5,5 +5,5 @@ defmodule Problem do
 
   @callback fitness_function(Chromosome.t) :: number()
 
-  @callback terminate?(Enum.t) :: boolean()
+  @callback terminate?(Enum.t, integer()) :: boolean()
 end
