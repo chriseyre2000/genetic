@@ -18,10 +18,27 @@ defmodule Genetic do
     |> Enum.sort_by(& &1.fitness, &>=/2)
   end
 
-  def select(population, _opts \\ []) do
-    population
-    |> Enum.chunk_every(2)
-    |> Enum.map(&List.to_tuple/1)
+  def select(population, opts \\ []) do
+    select_fn = Keyword.get(opts, :selection_type, &Toolbox.Selection.elite/2)
+
+    select_rate = Keyword.get(opts, :selection_rate, 0.8)
+
+    n = round(length(population) * select_rate)
+    n = if rem(n, 2) == 0, do: n, else: n + 1
+
+    parents = select_fn
+      |> apply([population, n])
+
+    leftover = population
+      |> MapSet.new()
+      |> MapSet.difference(MapSet.new(parents))
+
+    parents =
+      parents
+      |> Enum.chunk_every(2)
+      |> Enum.map(&List.to_tuple/1)
+
+    {parents, MapSet.to_list(leftover)}
   end
 
   def crossover(population, _opts \\ []) do
@@ -64,12 +81,11 @@ defmodule Genetic do
     if problem.terminate?(population, generation) do
       best
     else
-      generation = generation + 1
-      population
-      |> select(opts)
-      |> crossover(opts)
-      |> mutation(opts)
-      |> evolve(problem, generation, opts)
+      {parents, leftover} = select(population, opts)
+      children = crossover(parents, opts)
+      children ++ leftover
+        |> mutation(opts)
+        |> evolve(problem, generation + 1, opts)
     end
   end
 end
