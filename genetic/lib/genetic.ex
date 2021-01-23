@@ -49,22 +49,16 @@ defmodule Genetic do
         {c1, c2} = apply(crossover_fn, [p1, p2])
         [c1, c2 | acc]
       end)
-    # |> Enum.map(&repair_chromosome/1)
   end
 
   def mutation(population, opts \\ []) do
-    mutation_fn = Keyword.get(opts, :mutation_type, &Toolbox.Mutation.flip/1)
+    mutation_fn = Keyword.get(opts, :mutation_type, &Toolbox.Mutation.scramble/1)
     rate = Keyword.get(opts, :mutation_rate, 0.05)
+    n = floor(length(population) * rate)
 
     population
-    |> Enum.map(
-      fn chromosome ->
-        if :rand.uniform() < rate do
-          apply(mutation_fn, [chromosome])
-        else
-          chromosome
-        end
-      end)
+    |> Enum.take_random(n)
+    |> Enum.map(& apply(mutation_fn, [&1]))
   end
 
   def run(problem, opts \\ []) do
@@ -77,15 +71,27 @@ defmodule Genetic do
   def evolve(population, problem, generation, opts \\ []) do
     population = evaluate(population, &problem.fitness_function/1, opts)
     best = hd(population)
-    IO.write("\rCurrent Best: #{best.fitness}")
+
+
+
+    fit_str =
+       best.fitness
+       |> :erlang.float_to_binary(decimals: 4)
+    IO.write("\rCurrent Best: #{fit_str}\tGeneration: #{generation}")
     if problem.terminate?(population, generation) do
       best
     else
       {parents, leftover} = select(population, opts)
       children = crossover(parents, opts)
-      children ++ leftover
-        |> mutation(opts)
-        |> evolve(problem, generation + 1, opts)
+      mutants = mutation(population, opts)
+      offspring = children ++ mutants
+      new_population = reinsertion(parents, offspring, leftover, opts)
+      evolve(new_population, problem, generation + 1, opts)
     end
+  end
+
+  def reinsertion(parents, offspring, leftover, opts \\ []) do
+    strategy = Keyword.get(opts, :reinsertion_strategy, &Toolbox.Reinsertion.pure/3)
+    apply(strategy, [parents, offspring, leftover])
   end
 end

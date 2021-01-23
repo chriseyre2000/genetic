@@ -3,6 +3,7 @@
               {description,"genetic"},
               {modules,['Elixir.Genetic','Elixir.Problem',
                         'Elixir.Toolbox.Crossover','Elixir.Toolbox.Mutation',
+                        'Elixir.Toolbox.Reinsertion',
                         'Elixir.Toolbox.Selection','Elixir.Types.Chromosome']},
               {registered,[]},
               {vsn,"0.1.0"}]}.
