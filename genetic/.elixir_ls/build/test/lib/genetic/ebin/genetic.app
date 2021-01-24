@@ -1,9 +1,13 @@
 {application,genetic,
-             [{applications,[kernel,stdlib,elixir,logger]},
+             [{applications,[kernel,stdlib,elixir,logger,crypto,libgraph]},
               {description,"genetic"},
-              {modules,['Elixir.Genetic','Elixir.Problem',
-                        'Elixir.Toolbox.Crossover','Elixir.Toolbox.Mutation',
+              {modules,['Elixir.Genetic','Elixir.Genetic.Application',
+                        'Elixir.Problem','Elixir.Toolbox.Crossover',
+                        'Elixir.Toolbox.Mutation',
                         'Elixir.Toolbox.Reinsertion',
-                        'Elixir.Toolbox.Selection','Elixir.Types.Chromosome']},
+                        'Elixir.Toolbox.Selection','Elixir.Types.Chromosome',
+                        'Elixir.Utilities.Geneology',
+                        'Elixir.Utilities.Statistics']},
               {registered,[]},
-              {vsn,"0.1.0"}]}.
+              {vsn,"0.1.0"},
+              {mod,{'Elixir.Genetic.Application',[]}}]}.
