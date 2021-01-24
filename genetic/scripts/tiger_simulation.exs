@@ -10,19 +10,19 @@ defmodule TigerSimulation do
 
   @impl true
   def fitness_function(chromosome) do
-    _tropic_scores = [0.0, 3.0, 2.0, 1.0, 0.5, 1.0, -1.0, 0.0]
-    tundra_scores = [1.0, 3.0, -2.0, -1.0, 0.5, 2.0, 1.0, 0.0]
+    tropic_scores = [0.0, 3.0, 2.0, 1.0, 0.5, 1.0, -1.0, 0.0]
+    _tundra_scores = [1.0, 3.0, -2.0, -1.0, 0.5, 2.0, 1.0, 0.0]
     traits = chromosome.genes
 
     traits
-    |> Enum.zip(tundra_scores)
+    |> Enum.zip(tropic_scores)
     |> Enum.map(fn {t, s} -> t * s end)
     |> Enum.sum()
   end
 
   @impl true
   def terminate?(_population, generation) do
-    generation == 1_000
+    generation == 2
   end
 
   def average_tiger(population) do
@@ -44,22 +44,17 @@ soln = Genetic.run(TigerSimulation,
     mutation_type: &Toolbox.Mutation.scramble/1,
     crossover_type: &Toolbox.Crossover.single_point/2,
     reinsertion_strategy: &Toolbox.Reinsertion.uniform/3,
-    population_size: 20,
-    selection_rate: 0.8,
-    mutation_rate: 0.1,
-    statistics: %{average_tiger: &TigerSimulation.average_tiger/1})
+    population_size: 5,
+    selection_rate: 0.9,
+    mutation_rate: 0.1)
 
 IO.write("\n")
 IO.inspect(soln)
 
-{_, zero_gen_stats} = Utilities.Statistics.lookup(0)
-{_, fivehundred_gen_stats} = Utilities.Statistics.lookup(500)
-{_, onethousand_gen_stats} = Utilities.Statistics.lookup(1000)
+# geneology = Utilities.Geneology.get_tree()
 
-IO.inspect zero_gen_stats.average_tiger
-IO.inspect fivehundred_gen_stats.average_tiger
-IO.inspect onethousand_gen_stats.average_tiger
+# {:ok, dot} = Graph.Serializers.DOT.serialize(geneology)
+# {:ok, dotfile} = File.open("tiger_simulation.dot", [:write])
+# :ok = IO.binwrite(dotfile, dot)
 
-geneology = Utilities.Geneology.get_tree()
-
-IO.inspect(Graph.vertices(geneology))
+# IO.inspect(Graph.vertices(geneology))

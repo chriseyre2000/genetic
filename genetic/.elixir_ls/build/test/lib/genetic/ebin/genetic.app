@@ -1,5 +1,6 @@
 {application,genetic,
-             [{applications,[kernel,stdlib,elixir,logger,crypto,libgraph]},
+             [{applications,[kernel,stdlib,elixir,logger,crypto,libgraph,
+                             gnuplot]},
               {description,"genetic"},
               {modules,['Elixir.Genetic','Elixir.Genetic.Application',
                         'Elixir.Problem','Elixir.Toolbox.Crossover',
