@@ -10,7 +10,7 @@ defmodule Utilities.Geneology do
   end
 
   # Child is a mutant of parent
-  def handle_cast({:add_choromosome, parent, child}, geneology) do
+  def handle_cast({:add_chromosome, parent, child}, geneology) do
     new_geneology =
      geneology
      |> Graph.add_edge(parent, child)
@@ -18,7 +18,7 @@ defmodule Utilities.Geneology do
   end
 
   # Child is a crossover of parent
-  def handle_cast({:add_choromosome, parent_a, parent_b, child}, geneology) do
+  def handle_cast({:add_chromosome, parent_a, parent_b, child}, geneology) do
     new_geneology =
      geneology
      |> Graph.add_edge(parent_a, child)
