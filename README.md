@@ -1,6 +1,6 @@
 # Genetic
 
-**TODO: This is the sample code typed in while working through the book
+** This is the sample code typed in while working through the book
 
 Genetic Algorithms in Elixir.
 
